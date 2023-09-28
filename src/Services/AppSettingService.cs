@@ -349,7 +349,7 @@ namespace SecureConnectionString.Services
         /// <param name="connectionNames"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public bool UpdateConnectionStrings(List<string> connectionNames, Func<string, string, string> predicate)
+        public bool UpdateConnectionStrings(IEnumerable<string> connectionNames, Func<string, string, string> predicate)
         {
             if (predicate == null)
             {
