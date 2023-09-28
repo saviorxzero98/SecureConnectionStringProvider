@@ -55,7 +55,7 @@ string cs = service.GetSecureConnectionString("TestDB", provider);
 
 ### (5) Delete Connection String
 
-```json
+```c#
 service.DeleteConnectionString("TestDB");
 ```
 
