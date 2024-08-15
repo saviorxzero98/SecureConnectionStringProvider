@@ -101,7 +101,7 @@ namespace SecureConnectionString.Cryptos
         /// <summary>
         /// Encrypt
         /// </summary>
-        /// <param name="plainText"></param>
+        /// <param name="securePlainText"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public string Encrypt(SecureString securePlainText, SymmetricCryptoKey key)
