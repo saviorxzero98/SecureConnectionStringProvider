@@ -99,13 +99,13 @@ namespace SecureConnectionString.Cryptos
             switch (algorithm)
             {
                 case HashAlgorithmType.SHA1:
-                    return new SHA1CryptoServiceProvider();
+                    return SHA1.Create();
                 case HashAlgorithmType.SHA256:
-                    return new SHA256CryptoServiceProvider();
+                    return SHA256.Create();
                 case HashAlgorithmType.SHA384:
-                    return new SHA384CryptoServiceProvider();
+                    return SHA384.Create();
                 case HashAlgorithmType.SHA512:
-                    return new SHA512CryptoServiceProvider();
+                    return SHA512.Create();
                 case HashAlgorithmType.MD5:
                 default:
                     return MD5.Create();

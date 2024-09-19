@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SecureConnectionString.Extensions;
-using SecureConnectionString.Providers;
 using SecureConnectionString.Test.Providers;
 using Xunit;
 
@@ -9,7 +8,6 @@ namespace SecureConnectionString.Test
     public class SecureConnectionStringHelperTest
     {
         protected IConfiguration Configuration { get; set; }
-        protected ISecureConnectionStringProvider Provider { get; set; }
 
         public SecureConnectionStringHelperTest()
         {
@@ -17,38 +15,51 @@ namespace SecureConnectionString.Test
                                                                    optional: true,
                                                                    reloadOnChange: true)
                                                       .Build();
-            Provider = new CustomSecureConnectionStringProvider();
         }
 
         [Fact]
-        public void TestGetConnectionString()
+        public void TestGetConnectionStringWithCustom()
         {
-            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer", Provider);
-            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql", Provider);
+            // Arrange
+            var provider = new CustomSecureConnectionStringProvider();
 
+            // Act
+            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer", provider);
+            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql", provider);
             string plainSqlServerConnection = Configuration.GetConnectionString("SqlServer");
             string plainPostgreServerConnection = Configuration.GetConnectionString("PostgreSql");
 
+            // Assert
             Assert.Equal(plainSqlServerConnection, sqlServerConnection);
             Assert.Equal(plainPostgreServerConnection, postgreServerConnection);
         }
 
         [Fact]
-        public void TestGetSecureConnectionString()
+        public void TestGetSecureConnectionStringWithCustom()
         {
-            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Encrypted", Provider);
-            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql-Encrypted", Provider);
+            // Arrange
+            var provider = new CustomSecureConnectionStringProvider();
 
+            // Act
+            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Encrypted", provider);
+            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql-Encrypted", provider);
+
+            // Assert
             Assert.Equal("data source=DemoDB;initial catalog=Demo;user id=sa;password=P@ssw0rd", sqlServerConnection);
             Assert.Equal("server=127.0.0.1;port=5432;database=DemoDB;user id=postgres;password=P@ssw0rd", postgreServerConnection);
         }
 
         [Fact]
-        public void TestGetUnsecureConnectionString()
+        public void TestGetUnsecureConnectionStringWithCustom()
         {
-            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Unencrypted", Provider);
-            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql-Unencrypted", Provider);
+            // Arrange
+            var provider = new CustomSecureConnectionStringProvider();
 
+            // Act
+            string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Unencrypted", provider);
+            string postgreServerConnection = Configuration.GetSecureConnectionString("PostgreSql-Unencrypted", provider);
+
+            // Assert
             Assert.Equal("data source=DemoDB;initial catalog=Demo;user id=sa;password=P@ssw0rd", sqlServerConnection);
             Assert.Equal("server=127.0.0.1;port=5432;database=DemoDB;user id=postgres;password=P@ssw0rd", postgreServerConnection);
         }

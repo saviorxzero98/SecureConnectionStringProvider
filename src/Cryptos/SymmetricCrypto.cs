@@ -193,18 +193,35 @@ namespace SecureConnectionString.Cryptos
             switch (algorithm)
             {
                 case SymmetricAlgorithmType.Rijndael:
-                    return new RijndaelManaged()
-                    {
-                        Mode = mode,
-                        Padding = padding
-                    };
+                    var rijndaelAlg = Rijndael.Create();
+                    rijndaelAlg.Mode = mode;
+                    rijndaelAlg.Padding = padding;
+                    return rijndaelAlg;
+
+                case SymmetricAlgorithmType.RC2:
+                    var rc2Alg = RC2.Create();
+                    rc2Alg.Mode = mode;
+                    rc2Alg.Padding = padding;
+                    return rc2Alg;
+
+                case SymmetricAlgorithmType.DES:
+                    var desAlg = DES.Create();
+                    desAlg.Mode = mode;
+                    desAlg.Padding = padding;
+                    return desAlg;
+
+                case SymmetricAlgorithmType.TripleDES:
+                    var tripleDesAlg = TripleDES.Create();
+                    tripleDesAlg.Mode = mode;
+                    tripleDesAlg.Padding = padding;
+                    return tripleDesAlg;
+
                 case SymmetricAlgorithmType.AES:
                 default:
-                    return new AesCryptoServiceProvider()
-                    {
-                        Mode = mode,
-                        Padding = padding
-                    };
+                    var aesAlg = Aes.Create();
+                    aesAlg.Mode = mode;
+                    aesAlg.Padding = padding;
+                    return aesAlg;
             }
         }
 
