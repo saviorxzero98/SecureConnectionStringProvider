@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SecureConnectionString.Providers;
-using SecureConnectionString.Services;
+using SCNS;
+using SCNS.EncryptionProviders;
 
 namespace SecureConnectionString.Extensions
 {
@@ -17,7 +17,7 @@ namespace SecureConnectionString.Extensions
         /// <returns></returns>
         public static Dictionary<string, string> GetConnectionStrings(this IConfiguration configuration)
         {
-            var connections = configuration.GetSection(AppSettingService.ConnectionStringSession).Get<Dictionary<string, string>>();
+            var connections = configuration.GetSection(ConnectionStringSession).Get<Dictionary<string, string>>();
             return connections;
         }
 
@@ -29,11 +29,12 @@ namespace SecureConnectionString.Extensions
         /// <param name="option"></param>
         /// <returns></returns>
         public static string GetSecureConnectionString(this IConfiguration configuration, string name,
-                                                       SecureConnectionStringOption option = null)
+                                                       ConnectionStringProtectionOptions? option = null)
         {
-            var helper = new SecureConnectionStringHelper(option);
+            var encryptionProvider = new StringEncryptionProvider();
+            var protectionProvider = new ConnectionStringProtectionProvider(encryptionProvider, option);
             string connectionString = configuration.GetConnectionString(name);
-            return helper.DecryptConnectionString(connectionString);
+            return protectionProvider.Unprotect(connectionString);
         }
 
         /// <summary>
@@ -41,16 +42,16 @@ namespace SecureConnectionString.Extensions
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="name"></param>
-        /// <param name="provider"></param>
+        /// <param name="encryptionProvider"></param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static string GetSecureConnectionString(this IConfiguration configuration, string name,
-                                                       ISecureConnectionStringProvider provider,
-                                                       SecureConnectionStringOption option = null)
+                                                       IStringEncryptionProvider encryptionProvider,
+                                                       ConnectionStringProtectionOptions? option = null)
         {
-            var helper = new SecureConnectionStringHelper(provider, option);
+            var protectionProvider = new ConnectionStringProtectionProvider(encryptionProvider, option);
             string connectionString = configuration.GetConnectionString(name);
-            return helper.DecryptConnectionString(connectionString);
+            return protectionProvider.Unprotect(connectionString);
         }
 
         /// <summary>

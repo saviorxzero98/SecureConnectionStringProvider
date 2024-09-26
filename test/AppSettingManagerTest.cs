@@ -3,12 +3,12 @@ using Xunit;
 
 namespace SecureConnectionString.Test
 {
-    public class AppSettingServiceTest
+    public class AppSettingManagerTest
     {
         [Fact]
         public void TestAppSetting()
         {
-            var service = new AppSettingService();
+            var service = new AppSettingManager();
 
             #region Add
 
@@ -61,7 +61,7 @@ namespace SecureConnectionString.Test
         [Fact]
         public void TestConnectionString()
         {
-            var service = new AppSettingService();
+            var service = new AppSettingManager();
 
 
             #region Add

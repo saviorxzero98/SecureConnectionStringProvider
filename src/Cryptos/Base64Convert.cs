@@ -2,24 +2,25 @@
 
 namespace SecureConnectionString.Cryptos
 {
-    public class Base64Encoder
+    public class Base64Convert
     {
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         public bool UrlEncodeFlag { get; set; } = false;
 
-        public Base64Encoder()
+        public Base64Convert()
         {
             UrlEncodeFlag = false;
             Encoding = Encoding.UTF8;
         }
 
-        public static Base64Encoder Instance
+        public static Base64Convert Create(bool urlEncodeFlag = false)
         {
-            get
+            return new Base64Convert()
             {
-                return new Base64Encoder();
-            }
+                UrlEncodeFlag = urlEncodeFlag
+            };
         }
+
 
         /// <summary>
         /// 字串轉Base64字串

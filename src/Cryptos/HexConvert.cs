@@ -2,21 +2,26 @@
 
 namespace SecureConnectionString.Cryptos
 {
-    public class HexEncoder
+    public class HexConvert
     {
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        public HexEncoder()
+        public HexConvert()
         {
             Encoding = Encoding.UTF8;
         }
 
-        public static HexEncoder Instance
+        public static HexConvert Instance
         {
             get
             {
-                return new HexEncoder();
+                return new HexConvert();
             }
+        }
+
+        public static HexConvert Create()
+        {
+            return new HexConvert();
         }
 
         /// <summary>

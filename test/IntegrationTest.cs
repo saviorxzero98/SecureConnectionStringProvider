@@ -1,4 +1,5 @@
-﻿using SecureConnectionString.Services;
+﻿using SCNS;
+using SecureConnectionString.Services;
 using SecureConnectionString.Test.Providers;
 using Xunit;
 
@@ -10,15 +11,15 @@ namespace SecureConnectionString.Test
         [Fact]
         public void TestEncryptConnectionString()
         {
-            var service = new AppSettingService("integration");
-            var provider = new CustomSecureConnectionStringProvider();
+            var manager = new AppSettingManager("integration");
+            var provider = new CustomStringEncryptionProvider();
 
 
             #region Add
 
             // Add Connection String
-            bool addConnectionResult = service.AddOrUpdateConnectionString("TestDB", "Data Source=DemoDB;Initial Catalog=Demo;User Id=sa;Password=P@ssw0rd;");
-            bool addConnectionResult2 = service.AddOrUpdateConnectionString("TestDB2", "Server=127.0.0.1;Port=5432;Database=DemoDB;User Id=postgres;Password=P@ssw0rd;");
+            bool addConnectionResult = manager.AddOrUpdateConnectionString("TestDB", "Data Source=DemoDB;Initial Catalog=Demo;User Id=sa;Password=P@ssw0rd;");
+            bool addConnectionResult2 = manager.AddOrUpdateConnectionString("TestDB2", "Server=127.0.0.1;Port=5432;Database=DemoDB;User Id=postgres;Password=P@ssw0rd;");
 
             // Assert Add Connection String
             Assert.True(addConnectionResult);
@@ -31,25 +32,24 @@ namespace SecureConnectionString.Test
 
             // Encrypt Connection String
             var connections = new List<string>() { "TestDB", "TestDB2" };
-            var helper = new SecureConnectionStringHelper(provider);
+            var protectionProvider = new ConnectionStringProtectionProvider(provider);
 
-            service.UpdateConnectionStrings(connections, (name, value) => helper.EncryptConnectionString(value));
-            //service.EncryptConnectionStrings(helper, connections);
+            manager.UpdateConnectionStrings(connections, (name, value) => protectionProvider.Protect(value));
 
-            string secureConnectionValue = service.GetConnectorString("TestDB");
-            string secureConnectionValue2 = service.GetConnectorString("TestDB2");
+            string secureConnectionValue = manager.GetConnectorString("TestDB");
+            string secureConnectionValue2 = manager.GetConnectorString("TestDB2");
 
             // Assert Encrypt Connection String
-            Assert.Equal("data source=DemoDB;initial catalog=Demo;user id=sa;password=847c65514ece7fe02e2e0e13e0ab0378;Is Encrypted Password=True", secureConnectionValue);
-            Assert.Equal("server=127.0.0.1;port=5432;database=DemoDB;user id=postgres;password=847c65514ece7fe02e2e0e13e0ab0378;Is Encrypted Password=True", secureConnectionValue2);
+            Assert.Equal("data source=DemoDB;initial catalog=Demo;user id=sa;password=b3f12a22ee4bf5fe04a90c1fb500837b;Is Encrypted Password=True", secureConnectionValue);
+            Assert.Equal("server=127.0.0.1;port=5432;database=DemoDB;user id=postgres;password=b3f12a22ee4bf5fe04a90c1fb500837b;Is Encrypted Password=True", secureConnectionValue2);
 
             #endregion
 
 
             #region Get Connection String
 
-            string plainServerConnection = service.GetSecureConnectionString("TestDB", provider);
-            string plainServerConnection2 = service.GetSecureConnectionString("TestDB2", provider);
+            string plainServerConnection = manager.GetSecureConnectionString("TestDB", provider);
+            string plainServerConnection2 = manager.GetSecureConnectionString("TestDB2", provider);
 
             Assert.Equal("data source=DemoDB;initial catalog=Demo;user id=sa;password=P@ssw0rd", plainServerConnection);
             Assert.Equal("server=127.0.0.1;port=5432;database=DemoDB;user id=postgres;password=P@ssw0rd", plainServerConnection2);
@@ -60,8 +60,8 @@ namespace SecureConnectionString.Test
             #region Delete
 
             // Delete Connection String
-            bool deleteConnectionResult = service.DeleteConnectionString("TestDB");
-            bool deleteConnectionResult2 = service.DeleteConnectionString("TestDB2");
+            bool deleteConnectionResult = manager.DeleteConnectionString("TestDB");
+            bool deleteConnectionResult2 = manager.DeleteConnectionString("TestDB2");
 
             // Assert Delete Connection String
             Assert.True(deleteConnectionResult);

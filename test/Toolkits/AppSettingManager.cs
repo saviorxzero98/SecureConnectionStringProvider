@@ -1,19 +1,20 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SCNS;
+using SCNS.EncryptionProviders;
 using SecureConnectionString.Extensions;
-using SecureConnectionString.Providers;
 
 namespace SecureConnectionString.Services
 {
-    public class AppSettingService
+    public class AppSettingManager
     {
         public string BaseDirectory { get; set; }
         public string AppSettingFile { get; set; }
 
         public const string ConnectionStringSession = "ConnectionStrings";
 
-        public AppSettingService(string environment = "")
+        public AppSettingManager(string environment = "")
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -70,7 +71,8 @@ namespace SecureConnectionString.Services
         /// <param name="connectionName"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public string GetSecureConnectionString(string connectionName, SecureConnectionStringOption option = null)
+        public string GetSecureConnectionString(string connectionName,
+                                                ConnectionStringProtectionOptions? option = null)
         {
             string connectorString = string.Empty;
             IConfiguration config = CreateConfiguration();
@@ -86,17 +88,19 @@ namespace SecureConnectionString.Services
         /// 取出連線字串 (已加密)
         /// </summary>
         /// <param name="connectionName"></param>
-        /// <param name="provider"></param>
+        /// <param name="encryptionProvider"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public string GetSecureConnectionString(string connectionName, ISecureConnectionStringProvider provider, SecureConnectionStringOption option = null)
+        public string GetSecureConnectionString(string connectionName,
+                                                IStringEncryptionProvider encryptionProvider,
+                                                ConnectionStringProtectionOptions? option = null)
         {
             string connectorString = string.Empty;
             IConfiguration config = CreateConfiguration();
 
             if (config != null)
             {
-                connectorString = config.GetSecureConnectionString(connectionName, provider, option) ?? string.Empty;
+                connectorString = config.GetSecureConnectionString(connectionName, encryptionProvider, option) ?? string.Empty;
             }
             return connectorString;
         }

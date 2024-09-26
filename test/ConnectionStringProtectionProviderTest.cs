@@ -5,11 +5,11 @@ using Xunit;
 
 namespace SecureConnectionString.Test
 {
-    public class SecureConnectionStringHelperTest
+    public class StringEncryptionProviderTest
     {
         protected IConfiguration Configuration { get; set; }
 
-        public SecureConnectionStringHelperTest()
+        public StringEncryptionProviderTest()
         {
             Configuration = new ConfigurationBuilder().AddJsonFile("appsettings.secure.json",
                                                                    optional: true,
@@ -21,7 +21,7 @@ namespace SecureConnectionString.Test
         public void TestGetConnectionStringWithCustom()
         {
             // Arrange
-            var provider = new CustomSecureConnectionStringProvider();
+            var provider = new CustomStringEncryptionProvider();
 
             // Act
             string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer", provider);
@@ -38,7 +38,7 @@ namespace SecureConnectionString.Test
         public void TestGetSecureConnectionStringWithCustom()
         {
             // Arrange
-            var provider = new CustomSecureConnectionStringProvider();
+            var provider = new CustomStringEncryptionProvider();
 
             // Act
             string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Encrypted", provider);
@@ -53,7 +53,7 @@ namespace SecureConnectionString.Test
         public void TestGetUnsecureConnectionStringWithCustom()
         {
             // Arrange
-            var provider = new CustomSecureConnectionStringProvider();
+            var provider = new CustomStringEncryptionProvider();
 
             // Act
             string sqlServerConnection = Configuration.GetSecureConnectionString("SqlServer-Unencrypted", provider);
